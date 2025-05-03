@@ -4,26 +4,22 @@ namespace App\Core;
 
 class ViewRenderer
 {
-    private Request $request;
-    private Response $response;
+    public Request $request;
+    public Response $response;
 
     public function __construct(Request $request, Response $response)
     {
         $this->request = $request;
         $this->response = $response;
     }
-    // protected function renderViewLayout(string $layout, string $view)
-    // {
-    //     $layoutContent = $this->renderLayout($layout);
-    //     $viewContent = $this->renderView($view);
-    //     return str_replace("{{content}}", $viewContent, $layoutContent);
-    // }
-    protected function renderLayout(string $layout)
+
+    private function renderLayout(string $layout)
     {
         ob_start();
         include_once Application::$ROOT_DIR."/views/layouts/$layout.php";
         return ob_get_clean();
     }
+
     public function renderView(string $view, array $params = [])
     {
         foreach($params as $key => $value)

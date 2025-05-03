@@ -45,8 +45,7 @@ class Router
         }
         if(is_array($action))
         {
-            $instance = new $action[0];
-            return call_user_func([$instance, $action[1]]);
+            $action[0] = new $action[0]($this->request, $this->response);
         }
         return call_user_func($action);
     }

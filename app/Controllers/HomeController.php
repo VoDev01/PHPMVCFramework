@@ -2,16 +2,12 @@
 
 namespace App\Controllers;
 
-use App\Core\Request;
-use App\Core\Response;
-use App\Core\ViewRenderer;
+use App\Core\Controller;
 
-class HomeController
+class HomeController extends Controller
 {
     public function home()
     {
-        $viewRenderer = new ViewRenderer(new Request(), new Response());
-        echo $viewRenderer->renderView("home");
-        return;
+        return $this->render("home", ['name' => ' sweet home!']);
     }
 }
