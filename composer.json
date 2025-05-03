@@ -1,0 +1,19 @@
+{
+    "name": "vodev/phpmvc-framework",
+    "description": "MVC framework project for learning how mvc frameworks work and to use plain php.",
+    "type": "framework",
+    "authors": [
+        {
+            "name": "Vlad Osipenko",
+            "email": "vodev1405@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "./",
+            "App\\Controllers\\": "./app/Controllers"
+        }
+    },
+    "config": {
+    }
+}
