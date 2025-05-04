@@ -10,4 +10,13 @@ class HomeController extends Controller
     {
         return $this->render("home", ['name' => ' sweet home!']);
     }
+    public function catalog()
+    {
+        return $this->render("catalog");
+    }
+    public function catalogPost()
+    {
+        echo 'Handling response data';
+        return;
+    }
 }
