@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Core\Request;
+use App\Validators\RegisterValidator;
 use App\Core\Controller;
 
 class HomeController extends Controller
@@ -14,9 +16,19 @@ class HomeController extends Controller
     {
         return $this->render("catalog");
     }
-    public function catalogPost()
+    public function catalogPost(Request $request)
     {
-        echo 'Handling response data';
+        echo $request->body()['name'];
+        return;
+    }
+    public function register()
+    {
+        return $this->render("register");
+    }
+    public function registerPost(Request $request)
+    {
+        $validated = (new RegisterValidator())->validate($request);
+        var_dump($validated);
         return;
     }
 }

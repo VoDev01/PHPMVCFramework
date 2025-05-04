@@ -38,6 +38,5 @@ class RouteMapper
     private function resolveRoutePath(string $routeName)
     {
         include_once Application::$ROOT_DIR."/routes/$routeName.php";
-        return;
     }
 }
