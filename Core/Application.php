@@ -5,7 +5,7 @@ namespace App\Core;
 /**
  * Base class for running all services
  */
-class Application 
+class Application
 {
     /**
      * @var string Specifies root directory of the project
@@ -28,6 +28,7 @@ class Application
      * @var RouteMapper
      */
     protected RouteMapper $routeMapper;
+    public Database $database;
 
     /**
      * @param string $ROOT_DIR
@@ -39,6 +40,7 @@ class Application
         $this->response = new Response();
         $this->router = new Router($this->request, $this->response);
         $this->routeMapper = new RouteMapper($this);
+        $this->database = new Database();
     }
 
     /**
