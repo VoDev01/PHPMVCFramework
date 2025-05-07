@@ -19,7 +19,6 @@ class HomeController extends Controller
     public function catalogPost(Request $request)
     {
         echo $request->body()['name'];
-        return;
     }
     public function register()
     {
@@ -29,6 +28,5 @@ class HomeController extends Controller
     {
         $validated = (new RegisterValidator())->validate($request);
         var_dump($validated);
-        return;
     }
 }
