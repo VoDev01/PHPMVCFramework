@@ -10,8 +10,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "App\\": "./",
-            "App\\Controllers\\": "./app/Controllers"
+            "App\\": ["./", "./app"]
         }
     },
     "config": {

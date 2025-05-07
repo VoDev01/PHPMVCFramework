@@ -68,9 +68,9 @@ class Router
      */
     public function resolve()
     {
-        $path = $this->request->getPath();
-        $method = $this->request->getMethod();
-        $action = $this->routes[strtolower($method)][$path];
+        $path = $this->request->path();
+        $method = $this->request->method();
+        $action = $this->routes[$method][$path];
         if(!$action)
         {
             echo "Not found";
@@ -86,6 +86,6 @@ class Router
         {
             $action[0] = new $action[0]($this->request, $this->response);
         }
-        return call_user_func($action);
+        return call_user_func($action, $this->request);
     }
 }
