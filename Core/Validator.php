@@ -61,7 +61,7 @@ abstract class Validator
         }
         else
         {
-            if($rule === 'required' && ($value === null || $value === "") && !$rule === 'nullable')
+            if($rule === 'required' && ($value === null || $value === "") && $rule !== 'nullable')
             {
                 $this->errors[$field] = $this->rulesMessages['required'];
             }

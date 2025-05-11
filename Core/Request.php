@@ -7,21 +7,30 @@ namespace App\Core;
  */
 class Request 
 {
-    public function __construct() {
+    public function __construct()
+    {
         if($this->isGet())
         {
-            foreach($_GET as $field)
+            foreach($_GET as $key => $value)
             {
-                $this->{$field} = filter_input(INPUT_GET, $field, FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->{$key} = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
             }
         }
         if($this->isPost())
         {
-            foreach($_POST as $field)
+            foreach($_POST as $key => $value)
             {
-                $this->{$field} = filter_input(INPUT_POST, $field, FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->{$key} = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
             }
         }
+    }
+    public function __set(string $key, $value)
+    {
+        $this->{$key} = $value;
+    }
+    public function __get(string $name)
+    {
+        return $this->{$name};
     }
     /**
      * Get path of the request without query

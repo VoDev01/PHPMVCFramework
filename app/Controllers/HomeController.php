@@ -18,7 +18,7 @@ class HomeController extends Controller
     }
     public function catalogPost(Request $request)
     {
-        echo $request->body()['name'];
+        echo $request->name;
     }
     public function register()
     {

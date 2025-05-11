@@ -28,9 +28,7 @@ class Application
      * @var RouteMapper
      */
     protected RouteMapper $routeMapper;
-
-    protected array $middlewares;
-
+    
     public Database $database;
 
     /**
@@ -52,13 +50,6 @@ class Application
     public function run()
     {
         $this->routeMapper->map();
-        foreach(self::$middlewares as $key => $middleware)
-        {
-            if(array_key_exists($key, self::$middlewares))
-                $middleware->handle($this->request, fn(Request $request) => self::$middlewares[$key+1]->handle($request, function() {}));
-            else
-                break;
-        }
         return $this->router->resolve();
     }
 }
