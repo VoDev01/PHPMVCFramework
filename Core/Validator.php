@@ -15,7 +15,7 @@ abstract class Validator
     public array $errors = [];
     private $rulesMessages;
 
-    public function validate(Request $request)
+    public function validate(Request $request): array
     {
         $this->errors = [];
         foreach ($this->rules() as $field => $rules)

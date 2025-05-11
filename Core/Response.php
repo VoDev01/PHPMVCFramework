@@ -9,7 +9,7 @@ class Response
 {
     /**
      * Get current response http code
-     * @return [type]
+     * @return int
      */
     public function getResponseCode()
     {
@@ -19,7 +19,7 @@ class Response
      * Sets http response code of the current response
      * @param int $code
      * 
-     * @return [type]
+     * @return int
      */
     public function setResponseCode(int $code)
     {

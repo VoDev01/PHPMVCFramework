@@ -34,43 +34,37 @@ class Request
     }
     /**
      * Get path of the request without query
-     * @return [type]
+     * @return string
      */
-    public function path()
+    public function path(): string
     {
-        $path = $_SERVER['REQUEST_URI'];
-        $questionPos = strpos($path, '?');
-        if($questionPos)
-        {
-            $path = substr($path, 0, $questionPos);
-        }
-        return $path;
+        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     }
     /**
      * Get method of the request
-     * @return [type]
+     * @return string
      */
-    public function method()
+    public function method(): string
     {
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
 
-    public function isMethod(string $method)
+    public function isMethod(string $method): bool
     {
         return $this->method() === $method;
     }
 
-    public function isGet()
+    public function isGet(): bool
     {
         return $this->isMethod('get');
     }
 
-    public function isPost()
+    public function isPost(): bool
     {
         return $this->isMethod('post');
     }
 
-    public function body()
+    public function body(): array
     {
         $body = [];
         if($this->isGet())

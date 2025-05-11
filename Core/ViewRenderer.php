@@ -30,9 +30,9 @@ class ViewRenderer
      * Renders layout and returns its contents
      * @param string $layout
      * 
-     * @return [type]
+     * @return string
      */
-    private function renderLayout(string $layout)
+    private function renderLayout(string $layout): string
     {
         ob_start();
         include_once Application::$ROOT_DIR."/views/layouts/$layout.php";
@@ -44,9 +44,9 @@ class ViewRenderer
      * @param string $view
      * @param array $params
      * 
-     * @return [type]
+     * @return string
      */
-    public function renderView(string $view, array $params = [])
+    public function renderView(string $view, array $params = []): string
     {
         foreach($params as $key => $value)
         {
@@ -56,11 +56,9 @@ class ViewRenderer
         include_once Application::$ROOT_DIR."/views/$view.php";
         $viewContent = ob_get_clean();
         $matches = [];
-        if(preg_match("/^.*<x-.*$|^.*<\/x-.*$/mu", $viewContent, $matches) == 1)
+        if(preg_match("/^.*<x-(.*)$|^.*<\/x-.*$/mu", $viewContent, $matches))
         {
-            $layoutPathDelimiterPos = strpos($matches[0], "-")+1;
-            $layoutName = substr($matches[0], $layoutPathDelimiterPos, strlen($matches[0]) - $layoutPathDelimiterPos - 1);
-            $layoutContent = $this->renderLayout($layoutName);
+            $layoutContent = $this->renderLayout($matches[1]);
             return str_replace("{{content}}", $viewContent, $layoutContent);
         }
         return $viewContent;
