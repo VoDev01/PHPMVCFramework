@@ -55,10 +55,9 @@ class ViewRenderer
         ob_start();
         include_once Application::$ROOT_DIR."/views/$view.php";
         $viewContent = ob_get_clean();
-        $matches = [];
-        if(preg_match("/^.*<x-(.*)$|^.*<\/x-.*$/mu", $viewContent, $matches))
+        if(preg_match("/^.*<x-(?<layoutName>.+)>\X*(?=.*<\/x-.+>).*$/mu", $viewContent, $matches))
         {
-            $layoutContent = $this->renderLayout($matches[1]);
+            $layoutContent = $this->renderLayout($matches["layoutName"]);
             return str_replace("{{content}}", $viewContent, $layoutContent);
         }
         return $viewContent;

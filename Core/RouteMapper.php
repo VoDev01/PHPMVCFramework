@@ -3,7 +3,7 @@
 namespace App\Core;
 
 /**
- * Loads routes are specified in routes folder
+ * Maps routes that are specified in routes folder
  */
 class RouteMapper
 {

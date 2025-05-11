@@ -23,7 +23,7 @@
         <div class="container">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" href="/home" aria-current="page">Home</a>
+                    <a class="nav-link active" href="/" aria-current="page">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/catalog">Catalog</a>
