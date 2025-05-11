@@ -8,25 +8,6 @@ namespace App\Core;
 class ViewRenderer
 {
     /**
-     * @var Request
-     */
-    public Request $request;
-    /**
-     * @var Response
-     */
-    public Response $response;
-
-    /**
-     * @param Request $request
-     * @param Response $response
-     */
-    public function __construct(Request $request, Response $response)
-    {
-        $this->request = $request;
-        $this->response = $response;
-    }
-
-    /**
      * Renders layout and returns its contents
      * @param string $layout
      * 

@@ -12,9 +12,9 @@ class HomeController extends Controller
     {
         return $this->render("home", ['name' => ' sweet home!']);
     }
-    public function catalog()
+    public function catalog(string $name = "namename")
     {
-        return $this->render("catalog");
+        return $this->render("catalog", ['name' => $name]);
     }
     public function catalogPost(Request $request)
     {

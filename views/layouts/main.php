@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>catalog</title>
+    <title><?= $title ?? "Title" ?></title>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta

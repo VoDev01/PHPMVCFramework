@@ -19,7 +19,6 @@ class Application
      * @var Response
      */
     public Response $response;
-
     /**
      * @var Router
      */
@@ -28,6 +27,7 @@ class Application
      * @var RouteMapper
      */
     protected RouteMapper $routeMapper;
+    protected RouterPathResolver $routerPathResolver;
     
     public Database $database;
 
@@ -42,6 +42,7 @@ class Application
         $this->router = new Router($this->request, $this->response);
         $this->routeMapper = new RouteMapper($this);
         $this->database = new Database();
+        $this->routerPathResolver = new RouterPathResolver($this->router);
     }
 
     /**
@@ -50,6 +51,6 @@ class Application
     public function run()
     {
         $this->routeMapper->map();
-        return $this->router->resolve();
+        return $this->routerPathResolver->resolve();
     }
 }

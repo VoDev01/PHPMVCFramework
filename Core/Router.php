@@ -31,6 +31,14 @@ class Router
         'post' => []
     ];
 
+    public function __get(string $name)
+    {
+        if(isset($this->{$name}))
+            return $this->{$name};
+        else
+            return null;
+    }
+
     /**
      * @param Request $request
      * @param Response $response
@@ -70,41 +78,7 @@ class Router
         $this->routes['post'][$uri] = $action;
     }
 
-    /**
-     * Resolve url path with some controller and its action
-     * @return [type]
-     */
-    public function resolve()
-    {
-        $path = $this->request->path();
-        $method = $this->request->method();
-        $action = $this->routes[$method][$path];
-
-        if (is_string($action))
-        {
-            echo $this->viewRenderer->renderView($action);
-            return;
-        }
-        $actionMatch = $this->matchPathWithPattern($method, $path);
-        if (!$actionMatch)
-        {
-            if (!isset($action))
-            {
-                echo "Not found";
-                $this->response->setResponseCode(404);
-                return;
-            }
-            $action[0] = new $action[0]($this->request, $this->response);
-        }
-        else
-        {
-            $controllerName = "\\App\\Controllers\\" . ucwords(strtolower($actionMatch['controller'])) . "Controller";
-            $action[0] = new $controllerName($this->request, $this->response);
-            $action[1] = strtolower($actionMatch['action']);
-        }
-        return call_user_func($action, $this->request);
-    }
-    protected function matchPathWithPattern(string $method, string $path): array|bool
+    public function matchPathWithPattern(string $method, string $path): array|bool
     {
         $path = trim($path, "/");
         foreach ($this->routes['patterns'] as $route)
@@ -122,7 +96,7 @@ class Router
         }
         return false;
     }
-    protected function getPatternFromPath(string $path): string
+    public function getPatternFromPath(string $path): string
     {
         $path = rawurldecode($path);
 
