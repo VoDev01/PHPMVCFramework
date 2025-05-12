@@ -29,4 +29,9 @@ class HomeController extends Controller
         $validated = (new RegisterValidator())->validate($request);
         var_dump($validated);
     }
+    public function users()
+    {
+        $users = $this->model->getData();
+        echo "User data";
+    }
 }

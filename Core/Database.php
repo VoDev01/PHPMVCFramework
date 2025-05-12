@@ -15,7 +15,7 @@ class Database
         private string $password
     ) 
     {
-        $dsn = "$driver:host=$host,dbname=$dbname";  
+        $dsn = "$driver:host=$host;dbname=$dbname";  
         $this->pdo = new PDO($dsn, $user, $password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }

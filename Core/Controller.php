@@ -2,13 +2,15 @@
 
 namespace App\Core;
 
+use App\Models\UserModel;
+
 /**
  * Base class of controller
  */
 class Controller
 {
     
-    public function __construct(private ViewRenderer $viewRenderer, private Model $model)
+    public function __construct(private ViewRenderer $viewRenderer, protected UserModel $model)
     {
     }
 

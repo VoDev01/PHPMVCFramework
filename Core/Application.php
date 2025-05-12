@@ -31,18 +31,21 @@ class Application
     
     public Database $database;
 
+    protected ServiceContainer $container;
+
     /**
      * @param string $ROOT_DIR
      */
-    public function __construct(string $ROOT_DIR)
+    public function __construct(string $ROOT_DIR, ServiceContainer $container)
     {
         self::$ROOT_DIR = $ROOT_DIR;
         $this->request = new Request();
         $this->response = new Response();
         $this->router = new Router($this->request, $this->response);
         $this->routeMapper = new RouteMapper($this);
-        $this->database = new Database();
-        $this->routerPathResolver = new RouterPathResolver($this->router);
+        $this->database = $container->get(Database::class);
+        $this->container = $container;
+        $this->routerPathResolver = new RouterPathResolver($this->router, $this->container);
     }
 
     /**

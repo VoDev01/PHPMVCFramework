@@ -33,7 +33,7 @@ class Router
 
     public function __get(string $name)
     {
-        if(isset($this->{$name}))
+        if (isset($this->{$name}))
             return $this->{$name};
         else
             return null;
@@ -52,9 +52,9 @@ class Router
 
     public function pattern(string $pattern, callable|array $action = null)
     {
-        if(is_array($action))
+        if (is_array($action))
             $this->routes['patterns'][$pattern] = ["controller" => $action[0], "action" => $action[1]];
-        else if(is_callable($action))
+        else if (is_callable($action))
             $this->routes['patterns'][$pattern] = ["closure" => $action];
         else
             array_push($this->routes['patterns'], $pattern);
@@ -87,34 +87,25 @@ class Router
         $actionMatch = $this->matchPathWithPattern($method, $path);
         if (!$actionMatch)
         {
-            if ($action === null)
-            {
-                echo "Not found";
-                $this->response->setResponseCode(404);
-                exit;
-            }
-            $action[0] = new $action[0](new ViewRenderer);
+            return $action;
         }
         else
         {
-            if(isset($actionMatch["closure"]))
+            if (isset($actionMatch["closure"]))
             {
                 $action["action"] = $actionMatch["closure"];
                 $action = array_merge($action, $actionMatch);
                 return $action;
             }
-            $controllerName = $actionMatch['controller'];
-            if(!class_exists($controllerName))
-            {
-                echo "Not found";
-                $this->response->setResponseCode(404);
-                exit;
-            }
-            $action[0] = $controllerName;
+
+            $matchNameToClassName = "App\\Controllers\\" . ucwords($actionMatch['controller']) . "Controller";
+            $matchNameExists = class_exists($matchNameToClassName);
+
+            $action[0] = $matchNameExists ? $matchNameToClassName : $actionMatch['controller'];
             $action[1] = strtolower($actionMatch['action']);
             $action = array_merge($action, $actionMatch);
+            return $action;
         }
-        return $action;
     }
     protected function matchPathWithPattern(string $method, string $path): array|bool
     {
@@ -153,7 +144,6 @@ class Router
                 $segment = "(?<" . $matches[1] . ">" . $matches[2] . ")";
             }
             return $segment;
-
         }, $segments);
 
         return "/^" . implode("\/", $segments) . "$/iu";

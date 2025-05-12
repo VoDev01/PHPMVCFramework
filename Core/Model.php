@@ -2,9 +2,11 @@
 
 namespace App\Core;
 
+use PDO;
+
 class Model
 {
-    public function __construct(public Database $database)
+    public function __construct(private Database $database)
     {
         
     }
@@ -17,5 +19,11 @@ class Model
                 $this->{$key} = $value;
             }
         }
+    }
+    public function getData(): array
+    {
+        $pdo = $this->database->pdo;
+        $stmt = $pdo->query("SELECT * FROM users");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

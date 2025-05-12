@@ -2,13 +2,12 @@
 
 namespace App\Core;
 
-use ReflectionClass;
 use ReflectionFunction;
 use ReflectionMethod;
 
 class RouterPathResolver
 {
-    public function __construct(private Router $router)
+    public function __construct(private Router $router, private ServiceContainer $container)
     {
     }
 
@@ -20,7 +19,7 @@ class RouterPathResolver
     {
         $path = $this->router->request->path();
         $method = $this->router->request->method();
-        $action = $this->router->routes[$method][$path];
+        $action = $this->router->routes[$method][$path] ?? null;
 
         if (is_string($action))
         {
@@ -32,15 +31,21 @@ class RouterPathResolver
             $action = $this->router->match($action, $method, $path);
         }
 
-        $closure = $action["closure"];
-        if (isset($action[0]) && isset($action[1]))
+        $closure = $action["closure"] ?? null;
+        if (isset($action[0]) && isset($action[1]) && $closure === null)
         {
-            $action[0] = $this->getObject($action[0]);
+            $action[0] = $this->container->get($action[0]);
             $params = $this->getActionParameters($action[0]::class, $action[1], $action);
+        }
+        else if(isset($closure))
+        {
+            $params = $this->getActionParameters(null, $closure, $action);
         }
         else
         {
-            $params = $this->getActionParameters(null, $closure, $action);
+            echo "Not found";
+            $this->router->response->setResponseCode(404);
+            return;
         }
         return call_user_func($closure ?? [$action[0], $action[1]], ...$params);
     }
@@ -63,26 +68,5 @@ class RouterPathResolver
         }
 
         return $params;
-    }
-
-    private function getObject(string $className): object
-    {
-        $reflector = new ReflectionClass($className);
-        $constructor = $reflector->getConstructor();
-        $dependecies = [];
-
-        if ($constructor === null)
-        {
-            return new $className;
-        }
-
-        foreach ($constructor->getParameters() as $parameter)
-        {
-            $type = (string) $parameter->getType();
-
-            $dependecies[] = $this->getObject($type);
-        }
-
-        return new $className(...$dependecies);
     }
 }
