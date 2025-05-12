@@ -2,12 +2,15 @@
 
 namespace App\Core;
 
+use ReflectionClass;
+use ReflectionFunction;
 use ReflectionMethod;
 
 class RouterPathResolver
 {
     public function __construct(private Router $router)
-    {}
+    {
+    }
 
     /**
      * Resolve url path with some controller and its action
@@ -24,30 +27,30 @@ class RouterPathResolver
             echo $this->router->viewRenderer->renderView($action);
             return;
         }
-        $actionMatch = $this->router->matchPathWithPattern($method, $path);
-        if (!$actionMatch)
+        if (is_array($action) || $action === null)
         {
-            if (!isset($action))
-            {
-                echo "Not found";
-                $this->router->response->setResponseCode(404);
-                return;
-            }
-            $action[0] = new $action[0](new ViewRenderer);
+            $action = $this->router->match($action, $method, $path);
+        }
+
+        $closure = $action["closure"];
+        if (isset($action[0]) && isset($action[1]))
+        {
+            $action[0] = $this->getObject($action[0]);
+            $params = $this->getActionParameters($action[0]::class, $action[1], $action);
         }
         else
         {
-            $controllerName = "\\App\\Controllers\\" . ucwords(strtolower($actionMatch['controller'])) . "Controller";
-            $action[0] = new $controllerName(new ViewRenderer);
-            $action[1] = strtolower($actionMatch['action']);
+            $params = $this->getActionParameters(null, $closure, $action);
         }
-        $params = $this->getControllerActionParameters($action[0]::class, $action[1], $this->router->request->body());
-        return call_user_func($action, $this->router->request);
+        return call_user_func($closure ?? [$action[0], $action[1]], ...$params);
     }
 
-    private function getControllerActionParameters(string $controller, string $action, array $values)
+    private function getActionParameters(string|null $controller, string|callable $action, array $values)
     {
-        $reflection = new ReflectionMethod($controller, $action);
+        if (isset($controller))
+            $reflection = new ReflectionMethod($controller, $action);
+        else
+            $reflection = new ReflectionFunction($action);
 
         $params = [];
 
@@ -60,5 +63,26 @@ class RouterPathResolver
         }
 
         return $params;
+    }
+
+    private function getObject(string $className): object
+    {
+        $reflector = new ReflectionClass($className);
+        $constructor = $reflector->getConstructor();
+        $dependecies = [];
+
+        if ($constructor === null)
+        {
+            return new $className;
+        }
+
+        foreach ($constructor->getParameters() as $parameter)
+        {
+            $type = (string) $parameter->getType();
+
+            $dependecies[] = $this->getObject($type);
+        }
+
+        return new $className(...$dependecies);
     }
 }

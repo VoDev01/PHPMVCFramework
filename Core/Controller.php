@@ -7,11 +7,9 @@ namespace App\Core;
  */
 class Controller
 {
-    private ViewRenderer $viewRenderer;
-
-    public function __construct(ViewRenderer $viewRenderer)
+    
+    public function __construct(private ViewRenderer $viewRenderer, private Model $model)
     {
-        $this->viewRenderer = $viewRenderer;
     }
 
     /**

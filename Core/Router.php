@@ -50,9 +50,14 @@ class Router
         $this->viewRenderer = new ViewRenderer($request, $response);
     }
 
-    public function pattern(string $pattern)
+    public function pattern(string $pattern, callable|array $action = null)
     {
-        array_push($this->routes['patterns'], $pattern);
+        if(is_array($action))
+            $this->routes['patterns'][$pattern] = ["controller" => $action[0], "action" => $action[1]];
+        else if(is_callable($action))
+            $this->routes['patterns'][$pattern] = ["closure" => $action];
+        else
+            array_push($this->routes['patterns'], $pattern);
     }
     /**
      * Register route with http GET method
@@ -77,26 +82,59 @@ class Router
     {
         $this->routes['post'][$uri] = $action;
     }
-
-    public function matchPathWithPattern(string $method, string $path): array|bool
+    public function match(array|null $action, string $method, string $path)
+    {
+        $actionMatch = $this->matchPathWithPattern($method, $path);
+        if (!$actionMatch)
+        {
+            if ($action === null)
+            {
+                echo "Not found";
+                $this->response->setResponseCode(404);
+                exit;
+            }
+            $action[0] = new $action[0](new ViewRenderer);
+        }
+        else
+        {
+            if(isset($actionMatch["closure"]))
+            {
+                $action["action"] = $actionMatch["closure"];
+                $action = array_merge($action, $actionMatch);
+                return $action;
+            }
+            $controllerName = $actionMatch['controller'];
+            if(!class_exists($controllerName))
+            {
+                echo "Not found";
+                $this->response->setResponseCode(404);
+                exit;
+            }
+            $action[0] = $controllerName;
+            $action[1] = strtolower($actionMatch['action']);
+            $action = array_merge($action, $actionMatch);
+        }
+        return $action;
+    }
+    protected function matchPathWithPattern(string $method, string $path): array|bool
     {
         $path = trim($path, "/");
-        foreach ($this->routes['patterns'] as $route)
+        foreach ($this->routes['patterns'] as $patternKey => $patternAction)
         {
-            $pattern = $this->getPatternFromPath($route);
+            $pattern = $this->getPatternFromPath(is_array($patternAction) ? $patternKey : $patternAction);
 
             if (preg_match($pattern, $path, $matches))
             {
                 $matches = array_filter($matches, "is_string", ARRAY_FILTER_USE_KEY);
 
-                $bind = array_merge($matches, $this->routes[$method]);
+                $bind = array_merge($matches, $this->routes[$method], is_array($patternAction) ? $patternAction : []);
 
                 return $bind;
             }
         }
         return false;
     }
-    public function getPatternFromPath(string $path): string
+    protected function getPatternFromPath(string $path): string
     {
         $path = rawurldecode($path);
 

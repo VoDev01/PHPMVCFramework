@@ -7,9 +7,16 @@ use PDO;
 class Database
 {
     public PDO $pdo;
-    public function __construct() 
+    public function __construct(
+        private string $driver,
+        private string $host,
+        private string $dbname,
+        private string $user,
+        private string $password
+    ) 
     {
-        $this->pdo = new PDO($_ENV['DB_DSN'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
+        $dsn = "$driver:host=$host,dbname=$dbname";  
+        $this->pdo = new PDO($dsn, $user, $password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Controllers\HomeController;
 
+$this->app->router->pattern("/home/catalog/{name:\w+}",[HomeController::class, 'catalog']);
 $this->app->router->pattern("/{controller}/{id:\d+}/{action}");
 $this->app->router->get('/', [HomeController::class, 'home']);
 $this->app->router->get('/catalog', [HomeController::class, 'catalog']);
