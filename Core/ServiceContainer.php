@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Core;
 
 use Closure;
-use ErrorException;
 use Exception;
 use ReflectionClass;
 use ReflectionNamedType;
+use InvalidArgumentException;
 
 class ServiceContainer
 {
@@ -43,38 +43,26 @@ class ServiceContainer
 
                 if ($type === null)
                 {
-                    throw new ErrorException(
+                    throw new InvalidArgumentException(
                         "Constructor parameter '{$parameter->getName()}' has no type declaration in the $className class",
-                        0,
-                        1,
-                        $constructor->getFileName(),
-                        $constructor->getStartLine()
                     );
                     break;
                 }
 
                 if (!($type instanceof ReflectionNamedType))
                 {
-                    throw new ErrorException(
+                    throw new InvalidArgumentException(
                         "Constructor parameter '{$parameter->getName()}' 
                     in the $className class is an invalid type: '$type' - 
                     only single named types are supported",
-                        0,
-                        1,
-                        $constructor->getFileName(),
-                        $constructor->getStartLine()
                     );
                     break;
                 }
 
                 if ($type->isBuiltin())
                 {
-                    throw new ErrorException(
+                    throw new InvalidArgumentException(
                         "Unable to resolve constructor parameter '{$parameter->getName()}' of type '$type' in the $className class",
-                        0,
-                        1,
-                        $constructor->getFileName(),
-                        $constructor->getStartLine()
                     );
                     break;
                 }

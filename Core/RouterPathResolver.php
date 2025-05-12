@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core;
 
+use App\Core\Exceptions\PageNotFoundException;
 use ReflectionFunction;
 use ReflectionMethod;
 
@@ -29,25 +32,24 @@ class RouterPathResolver
         if (is_array($action) || $action === null)
         {
             $action = $this->router->match($action, $method, $path);
-        }
 
-        $closure = $action["closure"] ?? null;
-        if (isset($action[0]) && isset($action[1]) && $closure === null)
-        {
-            $action[0] = $this->container->get($action[0]);
-            $params = $this->getActionParameters($action[0]::class, $action[1], $action);
+            if (isset($action) && !isset($action['closure']))
+            {
+                $action['controller'] = $this->container->get($action['controller']);
+                $params = $this->getActionParameters($action['controller']::class, $action['action'], $action);
+            }
+            else if (isset($action['closure']))
+            {
+                $params = $this->getActionParameters(null, $action['closure'], $action);
+            }
+            else
+            {
+                throw new PageNotFoundException("No route matched for '$path'");
+                $this->router->response->setResponseCode(404);
+                return;
+            }
         }
-        else if(isset($closure))
-        {
-            $params = $this->getActionParameters(null, $closure, $action);
-        }
-        else
-        {
-            echo "Not found";
-            $this->router->response->setResponseCode(404);
-            return;
-        }
-        return call_user_func($closure ?? [$action[0], $action[1]], ...$params);
+        return call_user_func($action['closure'] ?? [$action['controller'], $action['action']], ...$params);
     }
 
     private function getActionParameters(string|null $controller, string|callable $action, array $values)

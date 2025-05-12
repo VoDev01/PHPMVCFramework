@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core;
 
 /**
@@ -68,7 +70,13 @@ class Router
      */
     public function get(string $uri, callable|array|string $action)
     {
-        $this->routes['get'][$uri] = $action;
+        $namedAction = [];
+        if(is_array($action))
+        {
+            $namedAction['controller'] = $action[0];
+            $namedAction['action'] = $action[1];
+        }
+        $this->routes['get'][$uri] = $namedAction ?? $action;
     }
 
     /**
@@ -80,7 +88,13 @@ class Router
      */
     public function post(string $uri, callable|array $action)
     {
-        $this->routes['post'][$uri] = $action;
+        $namedAction = [];
+        if(is_array($action))
+        {
+            $namedAction['controller'] = $action[0];
+            $namedAction['action'] = $action[1];
+        }
+        $this->routes['post'][$uri] = $namedAction ?? $action;
     }
     public function match(array|null $action, string $method, string $path)
     {
@@ -93,7 +107,7 @@ class Router
         {
             if (isset($actionMatch["closure"]))
             {
-                $action["action"] = $actionMatch["closure"];
+                $action["closure"] = $actionMatch["closure"];
                 $action = array_merge($action, $actionMatch);
                 return $action;
             }
@@ -101,9 +115,9 @@ class Router
             $matchNameToClassName = "App\\Controllers\\" . ucwords($actionMatch['controller']) . "Controller";
             $matchNameExists = class_exists($matchNameToClassName);
 
-            $action[0] = $matchNameExists ? $matchNameToClassName : $actionMatch['controller'];
-            $action[1] = strtolower($actionMatch['action']);
-            $action = array_merge($action, $actionMatch);
+            $action['controller'] = $matchNameExists ? $matchNameToClassName : $actionMatch['controller'];
+            $action['action'] = strtolower($actionMatch['action']);
+            //$action = array_merge($action, $actionMatch);
             return $action;
         }
     }

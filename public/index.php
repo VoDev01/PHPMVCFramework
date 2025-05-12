@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Dotenv\Dotenv;
 use App\Core\Database;
 use App\Core\ServiceContainer;
