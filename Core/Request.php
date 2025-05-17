@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use UnexpectedValueException;
+
 /**
  * Class describing http request
  */
@@ -38,7 +40,12 @@ class Request
      */
     public function path(): string
     {
-        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        if($path === false)
+        {
+            throw new UnexpectedValueException("Malformed URL: '{$_SERVER["REQUEST_URI"]}'");
+        }
+        return $path;
     }
     /**
      * Get method of the request
