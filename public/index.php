@@ -8,14 +8,37 @@ use App\Core\ServiceContainer;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+set_error_handler(function (
+    int $errno,
+    string $errstr,
+    string $errfile,
+    int $errline
+): bool
+{
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+});
+
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
+
 set_exception_handler(function (Throwable $e)
 {
-    if ($_ENV["APP_SHOW_ERRORS"] === "1")
+    if ($e instanceof \App\Core\Exceptions\PageNotFoundException)
+    {
+        http_response_code(404);
+
+        $template = "404.php";
+    }
+    else
+    {
+        http_response_code(500);
+
+        $template = "500.php";
+    }
+    if ($_ENV["APP_SHOW_ERRORS"] === "1" || $_ENV["APP_SHOW_ERRORS"] === true)
         ini_set("display_errors", "1");
-    else if ($_ENV["APP_SHOW_ERRORS"] === "0")
+    else if ($_ENV["APP_SHOW_ERRORS"] === "0" || $_ENV["APP_SHOW_ERRORS"] === false)
     {
         ini_set("display_errors", "0");
 
@@ -23,7 +46,7 @@ set_exception_handler(function (Throwable $e)
 
         echo ini_get("error_log");
 
-        require __DIR__ . "/../views/errors/500.php";
+        require __DIR__ . "/../views/errors/$template";
     }
 
     throw $e;
