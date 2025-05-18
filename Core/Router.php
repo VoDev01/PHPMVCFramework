@@ -115,9 +115,9 @@ class Router
             $matchNameToClassName = "App\\Controllers\\" . ucwords($actionMatch['controller']) . "Controller";
             $matchNameExists = class_exists($matchNameToClassName);
 
+            $action = $action == null ? $actionMatch : array_merge($action, $actionMatch);
             $action['controller'] = $matchNameExists ? $matchNameToClassName : $actionMatch['controller'];
             $action['action'] = strtolower($actionMatch['action']);
-            //$action = array_merge($action, $actionMatch);
             return $action;
         }
     }

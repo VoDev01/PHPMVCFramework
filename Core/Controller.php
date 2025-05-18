@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-use App\Models\UserModel;
+use App\Models\Product;
 
 /**
  * Base class of controller
@@ -10,7 +10,7 @@ use App\Models\UserModel;
 class Controller
 {
     
-    public function __construct(private ViewRenderer $viewRenderer, protected UserModel $model)
+    public function __construct(private ViewRenderer $viewRenderer, protected Product $model)
     {
     }
 

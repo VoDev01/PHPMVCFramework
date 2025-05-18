@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Core\Model;
 
-class UserModel extends Model
+class User extends Model
 {
-    public int $id;
+    protected $table = "users";
     public string $name;
     public string $surname;
     public string $email;
