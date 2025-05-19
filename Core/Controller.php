@@ -2,15 +2,14 @@
 
 namespace App\Core;
 
-use App\Models\Product;
+use App\Models\User;
 
 /**
  * Base class of controller
  */
 class Controller
 {
-    
-    public function __construct(private ViewRenderer $viewRenderer, protected Product $model)
+    public function __construct(private ViewRenderer $viewRenderer, protected User $model)
     {
     }
 
@@ -24,6 +23,5 @@ class Controller
     public function render($view, array $params = [])
     {
         echo $this->viewRenderer->renderView($view, $params);
-        return;
     }
 }

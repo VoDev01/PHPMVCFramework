@@ -117,7 +117,7 @@ class Router
 
             $action = $action == null ? $actionMatch : array_merge($action, $actionMatch);
             $action['controller'] = $matchNameExists ? $matchNameToClassName : $actionMatch['controller'];
-            $action['action'] = strtolower($actionMatch['action']);
+            $action['action'] = lcfirst(ucwords($actionMatch['action']));
             return $action;
         }
     }

@@ -6,7 +6,7 @@ use App\Core\Validator;
 
 class RegisterValidator extends Validator
 {
-    public function rules() : array
+    protected function rules() : array
     {
         return [
             'name' => ['required', 'min:3', 'max:25'],

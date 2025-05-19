@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Core\Request;
 use App\Validators\RegisterValidator;
 use App\Core\Controller;
-use App\Core\Exceptions\PageNotFoundException;
 
 class HomeController extends Controller
 {
@@ -13,12 +12,10 @@ class HomeController extends Controller
     {
         return $this->render("home", ['name' => ' sweet home!']);
     }
-    public function showProduct(int $id)
+    public function showUser(int $id)
     {
-        $product = $this->model->find($id);
-        if(!$product)
-            throw new PageNotFoundException("Requested resource of model " . get_class($this->model) . " with id {$id} not found");
-        return $this->render("showProduct", ['product' => $product]);
+        $user = $this->model->find($id);
+        return $this->render("/user/show", ['user' => $user]);
     }
     public function catalog(string $name = "namename")
     {
@@ -34,7 +31,16 @@ class HomeController extends Controller
     }
     public function registerPost(Request $request)
     {
-        $validated = (new RegisterValidator())->validate($request);
-        var_dump($validated);
+        $validated = (new RegisterValidator)->validate($request);
+        if(!isset($validated->errors))
+        {
+            $this->model->insert($validated);
+            header("Location: /home/{$this->model->getInsertId()}/showuser");
+            exit;
+        }
+        else
+        {
+            $this->render("register", ['errors' => $validated->errors]);
+        }
     }
 }

@@ -2,8 +2,8 @@
 
 $rulesMessages = [
     'required' => 'Field is required',
-    'min' => 'Field length is smaller than x characters',
-    'max' => 'Field length is bigger than x characters',
+    'min' => 'Field length is shorter than x characters',
+    'max' => 'Field length is longer than x characters',
     'lowercase' => 'Field must be written in lowercase',
     'uppercase' => 'Field must be written in upper case',
     'not_in' => 'Field must not contain such value',
@@ -19,5 +19,6 @@ $rulesMessages = [
     'url' => 'Field must be a valid url adress',
     'between' => 'Field must be between x and y range',
     'distinct' => 'Array must not have duplicates',
-    'contains' => 'Array must contain x values'
+    'contains' => 'Array must contain x values',
+    'phone' => 'Invalid phone number'
 ];

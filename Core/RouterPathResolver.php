@@ -32,6 +32,7 @@ class RouterPathResolver
         if (is_array($action) || $action === null)
         {
             $action = $this->router->match($action, $method, $path);
+            $action['request'] = new Request;
 
             if (isset($action) && !isset($action['closure']))
             {

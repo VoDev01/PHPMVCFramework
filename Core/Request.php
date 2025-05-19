@@ -7,6 +7,7 @@ use UnexpectedValueException;
 /**
  * Class describing http request
  */
+#[\AllowDynamicProperties]
 class Request 
 {
     public function __construct()
@@ -25,10 +26,6 @@ class Request
                 $this->{$key} = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
             }
         }
-    }
-    public function __set(string $key, $value)
-    {
-        $this->{$key} = $value;
     }
     public function __get(string $name)
     {

@@ -4,7 +4,6 @@ namespace App\Core;
 
 use App\Core\Application;
 use App\Core\Request;
-use Exception;
 
 abstract class Validator
 {
@@ -15,7 +14,7 @@ abstract class Validator
     public array $errors = [];
     private $rulesMessages;
 
-    public function validate(Request $request): array
+    public function validate(Request $request): array|Validator
     {
         $this->errors = [];
         foreach ($this->rules() as $field => $rules)
@@ -38,11 +37,18 @@ abstract class Validator
             }
         }
         if($this->errors !== [])
-            return $this->errors;
+        {
+            foreach($this->errors as $key => $error)
+            {
+                $field = ucwords($key); 
+                $this->errors[$key] = "$field invalid - $error";
+            }
+            return $this;
+        }
         return $request->body();
     }
 
-    public abstract function rules(): array;
+    protected abstract function rules(): array;
 
     private function addErrors(string $rule, $field, $value)
     {
@@ -84,6 +90,10 @@ abstract class Validator
             if($rule === 'url' && !filter_var($value, FILTER_VALIDATE_URL))
             {
                 $this->errors[$field] = $this->rulesMessages['url'];
+            }
+            if($rule === 'phone' && !preg_match('/^\+?\d{1}[ -]?\(?\d{3}\)?[ -]?\d{2}[ -]?\d{2}[ -]?\d{3}$/', $value))
+            {
+                $this->errors[$field] = $this->rulesMessages['phone'];
             }
         }
     }

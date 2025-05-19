@@ -1,10 +1,13 @@
 <x-main>
     <h1>Register</h1>
-    <form action="" method="post">
+    <form action="registerPost" method="post">
         <div class="row mb-3">
             <div class="col">
                 <label for="name" class="form-label">Name</label>
                 <input type="text" class="form-control" name="name" id="name" />
+                <?php if(isset($errors["name"])): ?>
+                    <p><?= $errors["name"] ?></p>
+                <?php endif; ?>
             </div>
             <div class="col">
                 <label for="surname" class="form-label">Surname</label>
@@ -18,6 +21,9 @@
                 class="form-control"
                 name="email"
                 id="email" />
+                <?php if(isset($errors["email"])): ?>
+                    <p><?= $errors["email"] ?></p>
+                <?php endif; ?>
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
@@ -26,6 +32,9 @@
                 class="form-control"
                 name="password"
                 id="password" />
+                <?php if(isset($errors["password"])): ?>
+                    <p><?= $errors["password"] ?></p>
+                <?php endif; ?>
         </div>
         <button
             type="submit"
