@@ -13,7 +13,7 @@ class ViewRenderer
      * 
      * @return string
      */
-    private function renderLayout(string $layout): string
+    private static function renderLayout(string $layout): string
     {
         ob_start();
         include_once Application::$ROOT_DIR."/views/layouts/$layout.php";
@@ -27,7 +27,7 @@ class ViewRenderer
      * 
      * @return string
      */
-    public function renderView(string $view, array $params = []): string
+    public static function renderView(string $view, array $params = []): string
     {
         foreach($params as $key => $value)
         {
@@ -38,7 +38,7 @@ class ViewRenderer
         $viewContent = ob_get_clean();
         if(preg_match("/^.*<x-(?<layoutName>.+)>\X*(?=.*<\/x-.+>).*$/mu", $viewContent, $matches))
         {
-            $layoutContent = $this->renderLayout($matches["layoutName"]);
+            $layoutContent = self::renderLayout($matches["layoutName"]);
             return str_replace("{{content}}", $viewContent, $layoutContent);
         }
         return $viewContent;

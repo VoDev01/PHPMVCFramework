@@ -2,17 +2,11 @@
 
 namespace App\Core;
 
-use App\Models\User;
-
 /**
  * Base class of controller
  */
 class Controller
 {
-    public function __construct(private ViewRenderer $viewRenderer, protected User $model)
-    {
-    }
-
     /**
      * Renders specified view with key value data that will be passed to view. Key is the name of parameter which will be used in view
      * @param mixed $view
@@ -22,6 +16,6 @@ class Controller
      */
     public function render($view, array $params = [])
     {
-        echo $this->viewRenderer->renderView($view, $params);
+        echo ViewRenderer::renderView($view, $params);
     }
 }
