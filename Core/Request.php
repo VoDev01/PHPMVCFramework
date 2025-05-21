@@ -5,7 +5,7 @@ namespace App\Core;
 use UnexpectedValueException;
 
 /**
- * Class describing http request
+ * Class that represents http request as OOP class
  */
 #[\AllowDynamicProperties]
 class Request 

@@ -5,16 +5,20 @@ namespace App\Controllers;
 use App\Core\Request;
 use App\Validators\RegisterValidator;
 use App\Core\Controller;
+use App\Models\User;
 
 class HomeController extends Controller
 {
+    public function __construct(private User $user) 
+    {
+    }
     public function home()
     {
         return $this->render("home", ['name' => ' sweet home!']);
     }
     public function showUser(int $id)
     {
-        $user = $this->model->find($id);
+        $user = $this->user->find($id);
         return $this->render("/user/show", ['user' => $user]);
     }
     public function catalog(string $name = "namename")
@@ -34,8 +38,8 @@ class HomeController extends Controller
         $validated = (new RegisterValidator)->validate($request);
         if(!isset($validated->errors))
         {
-            $this->model->insert($validated);
-            header("Location: /home/{$this->model->getInsertId()}/showuser");
+            $this->user->insert($validated);
+            header("Location: /home/{$this->user->getInsertId()}/showuser");
             exit;
         }
         else
