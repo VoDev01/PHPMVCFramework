@@ -61,6 +61,20 @@ class Router
         else
             array_push($this->routes['patterns'], $pattern);
     }
+
+    private function actionToAssociativeArray(mixed $action): array|null
+    {
+        $namedAction = [];
+        if (is_array($action))
+        {
+            $namedAction['controller'] = $action[0];
+            $namedAction['action'] = $action[1];
+        }
+        else
+            $namedAction = null;
+        return $namedAction;
+    }
+
     /**
      * Register route with http GET method
      * @param string $uri
@@ -70,13 +84,7 @@ class Router
      */
     public function get(string $uri, callable|array|string $action)
     {
-        $namedAction = [];
-        if(is_array($action))
-        {
-            $namedAction['controller'] = $action[0];
-            $namedAction['action'] = $action[1];
-        }
-        $this->routes['get'][$uri] = $namedAction ?? $action;
+        $this->routes['get'][$uri] = $this->actionToAssociativeArray($action) ?? $action;
     }
 
     /**
@@ -88,14 +96,24 @@ class Router
      */
     public function post(string $uri, callable|array $action)
     {
-        $namedAction = [];
-        if(is_array($action))
-        {
-            $namedAction['controller'] = $action[0];
-            $namedAction['action'] = $action[1];
-        }
-        $this->routes['post'][$uri] = $namedAction ?? $action;
+        $this->routes['post'][$uri] = $this->actionToAssociativeArray($action) ?? $action;
     }
+
+    public function put(string $uri, callable|array $action)
+    {
+        $this->routes['put'][$uri] = $this->actionToAssociativeArray($action) ?? $action;
+    }
+
+    public function patch(string $uri, callable|array $action)
+    {
+        $this->routes['patch'][$uri] = $this->actionToAssociativeArray($action) ?? $action;
+    }
+
+    public function delete(string $uri, callable|array $action)
+    {
+        $this->routes['delete'][$uri] = $this->actionToAssociativeArray($action) ?? $action;
+    }
+
     public function match(array|null $action, string $method, string $path)
     {
         $actionMatch = $this->matchPathWithPattern($method, $path);
@@ -133,6 +151,14 @@ class Router
                 $matches = array_filter($matches, "is_string", ARRAY_FILTER_USE_KEY);
 
                 $bind = array_merge($matches, $this->routes[$method], is_array($patternAction) ? $patternAction : []);
+
+                if(array_key_exists($method, $this->routes))
+                {
+                    if(!array_key_exists($path, $this->routes[$method]))
+                    {
+                        continue;
+                    }
+                }
 
                 return $bind;
             }

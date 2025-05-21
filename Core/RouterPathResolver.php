@@ -32,10 +32,10 @@ class RouterPathResolver
         if (is_array($action) || $action === null)
         {
             $action = $this->router->match($action, $method, $path);
-            $action['request'] = new Request;
 
             if (isset($action) && !isset($action['closure']))
             {
+                $action['request'] = new Request;
                 $action['controller'] = $this->container->get($action['controller']);
                 $params = $this->getActionParameters($action['controller']::class, $action['action'], $action);
             }
@@ -45,7 +45,7 @@ class RouterPathResolver
             }
             else
             {
-                throw new PageNotFoundException("No route matched for '$path'");
+                throw new PageNotFoundException("No route matched for '$path' with method '".strtoupper($method)."'");
                 $this->router->response->setResponseCode(404);
                 return;
             }
@@ -56,7 +56,15 @@ class RouterPathResolver
     private function getActionParameters(string|null $controller, string|callable $action, array $values)
     {
         if (isset($controller))
+        {
+            if (!method_exists($controller, $action) && !(bool)$_ENV['APP_SHOW_ERRORS'])
+            {
+                throw new PageNotFoundException("No route matched for '{$this->router->request->path()}'");
+                $this->router->response->setResponseCode(404);
+                return;
+            }
             $reflection = new ReflectionMethod($controller, $action);
+        }
         else
             $reflection = new ReflectionFunction($action);
 

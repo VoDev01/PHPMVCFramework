@@ -1,7 +1,9 @@
 <?php
 
 use App\Controllers\HomeController;
+use App\Controllers\ProductsController;
 
+$this->app->router->post("/products/{id:\d+}/delete", [ProductsController::class, 'delete']);
 $this->app->router->pattern("/home/catalog/{name:\w+}",[HomeController::class, 'catalog']);
 $this->app->router->pattern("/{controller}/{id:\d+}/{action}");
 $this->app->router->get('/', [HomeController::class, 'home']);
