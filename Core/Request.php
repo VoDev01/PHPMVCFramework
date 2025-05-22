@@ -10,13 +10,17 @@ use UnexpectedValueException;
 #[\AllowDynamicProperties]
 class Request 
 {
-    public function __construct()
+    public array $query;
+    public array $body;
+
+    public function __construct(public array $files, public array $cookie, public array $server)
     {
         if($this->isGet())
         {
             foreach($_GET as $key => $value)
             {
                 $this->{$key} = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->query[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
             }
         }
         if($this->isPost())
@@ -24,6 +28,7 @@ class Request
             foreach($_POST as $key => $value)
             {
                 $this->{$key} = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                $this->body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
             }
         }
     }
@@ -31,6 +36,12 @@ class Request
     {
         return $this->{$name};
     }
+
+    public static function createFromGlobals()
+    {
+        return new static($_FILES, $_COOKIE, $_SERVER);
+    }
+
     /**
      * Get path of the request without query
      * @return string
@@ -66,6 +77,21 @@ class Request
     public function isPost(): bool
     {
         return $this->isMethod('post');
+    }
+
+    public function isPatch(): bool
+    {
+        return $this->isMethod('patch');
+    }
+
+    public function isPut(): bool
+    {
+        return $this->isMethod('put');
+    }
+
+    public function isDelete(): bool
+    {
+        return $this->isMethod('delete');
     }
 
     public function body(): array

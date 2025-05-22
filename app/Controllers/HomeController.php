@@ -31,7 +31,7 @@ class HomeController extends Controller
     }
     public function register()
     {
-        return $this->render("register");
+        return $this->render("/user/register");
     }
     public function registerPost(Request $request)
     {
@@ -44,7 +44,7 @@ class HomeController extends Controller
         }
         else
         {
-            $this->render("register", ['errors' => $validated->errors]);
+            $this->render("/user/register", ['errors' => $validated->errors]);
         }
     }
 }

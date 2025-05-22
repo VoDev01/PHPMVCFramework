@@ -39,7 +39,7 @@ class Application
     public function __construct(string $ROOT_DIR, ServiceContainer $container)
     {
         self::$ROOT_DIR = $ROOT_DIR;
-        $this->request = new Request();
+        $this->request = Request::createFromGlobals();
         $this->response = new Response();
         $this->router = new Router($this->request, $this->response);
         $this->routeMapper = new RouteMapper($this);
@@ -54,6 +54,6 @@ class Application
     public function run()
     {
         $this->routeMapper->map();
-        return $this->routerPathResolver->resolve();
+        return $this->routerPathResolver->resolve($this->request);
     }
 }

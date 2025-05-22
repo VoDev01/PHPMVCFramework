@@ -7,12 +7,13 @@ use App\Core\Request;
 
 abstract class Validator
 {
+    public array $errors = [];
+    private $rulesMessages;
+
     public function __construct() {
         include_once Application::$ROOT_DIR . '/config/rulesmessages.php';
         $this->rulesMessages = $rulesMessages;
     }
-    public array $errors = [];
-    private $rulesMessages;
 
     public function validate(Request $request): array|Validator
     {

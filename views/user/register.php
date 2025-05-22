@@ -1,6 +1,6 @@
 <x-main>
     <h1>Register</h1>
-    <form action="registerPost" method="post">
+    <form action="/register" method="post">
         <div class="row mb-3">
             <div class="col">
                 <label for="name" class="form-label">Name</label>

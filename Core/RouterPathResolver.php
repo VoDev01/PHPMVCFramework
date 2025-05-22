@@ -18,7 +18,7 @@ class RouterPathResolver
      * Resolve url path with some controller and its action
      * @return [type]
      */
-    public function resolve()
+    public function resolve(Request $request)
     {
         $path = $this->router->request->path();
         $method = $this->router->request->method();
@@ -35,8 +35,9 @@ class RouterPathResolver
 
             if (isset($action) && !isset($action['closure']))
             {
-                $action['request'] = new Request;
+                $action['request'] = $request;
                 $action['controller'] = $this->container->get($action['controller']);
+                $action['controller']->setRequest($request);
                 $params = $this->getActionParameters($action['controller']::class, $action['action'], $action);
             }
             else if (isset($action['closure']))
