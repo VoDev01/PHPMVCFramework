@@ -19,9 +19,9 @@ class Router
     public Response $response;
 
     /**
-     * @var ViewRenderer
+     * @var PHPTemplateViewRenderer
      */
-    protected ViewRenderer $viewRenderer;
+    protected PHPTemplateViewRenderer $viewRenderer;
 
     /**
      * Stores all routes
@@ -49,7 +49,7 @@ class Router
     {
         $this->request = $request;
         $this->response = $response;
-        $this->viewRenderer = new ViewRenderer($request, $response);
+        $this->viewRenderer = new PHPTemplateViewRenderer($request, $response);
     }
 
     public function pattern(string $pattern, callable|array $action = null)

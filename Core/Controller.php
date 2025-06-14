@@ -9,9 +9,16 @@ class Controller
 {
     protected Request $request;
 
+    protected TemplateViewRendererInterface $viewRenderer;
+
     public function setRequest(Request $request)
     {
         $this->request = $request;
+    }
+
+    public function setViewRenderer(TemplateViewRendererInterface $viewRenderer)
+    {
+        $this->viewRenderer = $viewRenderer;
     }
 
     /**
@@ -23,6 +30,6 @@ class Controller
      */
     public function render($view, array $params = [])
     {
-        echo ViewRenderer::renderView($view, $params);
+        echo $this->viewRenderer->renderView($view, $params);
     }
 }

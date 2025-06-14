@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title><?= $title ?? "Title" ?></title>
+    {{ title }}
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta

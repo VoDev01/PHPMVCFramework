@@ -27,6 +27,7 @@ class Application
      * @var RouteMapper
      */
     protected RouteMapper $routeMapper;
+
     protected RouterPathResolver $routerPathResolver;
     
     public Database $database;
@@ -54,6 +55,6 @@ class Application
     public function run()
     {
         $this->routeMapper->map();
-        return $this->routerPathResolver->resolve($this->request);
+        return $this->routerPathResolver->resolve($this->request, $this->container->get(TemplateViewRendererInterface::class));
     }
 }

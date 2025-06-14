@@ -5,7 +5,7 @@ namespace App\Core;
 /**
  * Renders views and layouts
  */
-class ViewRenderer
+class PHPTemplateViewRenderer implements TemplateViewRendererInterface
 {
     /**
      * Renders layout and returns its contents
@@ -13,7 +13,7 @@ class ViewRenderer
      * 
      * @return string
      */
-    private static function renderLayout(string $layout): string
+    public function renderLayout(string $layout): string
     {
         ob_start();
         include_once Application::$ROOT_DIR."/views/layouts/$layout.php";
@@ -27,19 +27,16 @@ class ViewRenderer
      * 
      * @return string
      */
-    public static function renderView(string $view, array $params = []): string
+    public function renderView(string $view, array $params = []): string
     {
-        foreach($params as $key => $value)
-        {
-            $$key = $value;
-        }
+        extract($params, EXTR_SKIP);
         ob_start();
         include_once Application::$ROOT_DIR."/views/$view.php";
         $viewContent = ob_get_clean();
         if(preg_match("/^.*<x-(?<layoutName>.+)>\X*(?=.*<\/x-.+>).*$/mu", $viewContent, $matches))
         {
-            $layoutContent = self::renderLayout($matches["layoutName"]);
-            return str_replace("{{content}}", $viewContent, $layoutContent);
+            $layoutContent = $this->renderLayout($matches["layoutName"]);
+            return preg_replace("/{{\s*content\s*}}/", $viewContent, $layoutContent);
         }
         return $viewContent;
     }
