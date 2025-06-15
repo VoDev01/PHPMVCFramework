@@ -55,6 +55,7 @@ class Application
     public function run()
     {
         $this->routeMapper->map();
-        return $this->routerPathResolver->resolve($this->request, $this->container->get(TemplateViewRendererInterface::class));
+        $response = $this->routerPathResolver->resolve($this->container->get(TemplateViewRendererInterface::class));
+        $response->send();
     }
 }

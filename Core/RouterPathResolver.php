@@ -18,7 +18,7 @@ class RouterPathResolver
      * Resolve url path with some controller and its action
      * @return [type]
      */
-    public function resolve(Request $request, TemplateViewRendererInterface $viewRenderer)
+    public function resolve(TemplateViewRendererInterface $viewRenderer): Response
     {
         $path = $this->router->request->path();
         $method = $this->router->request->method();
@@ -26,8 +26,8 @@ class RouterPathResolver
 
         if (is_string($action))
         {
-            echo $this->router->viewRenderer->renderView($action);
-            return;
+            $this->router->response->setBody($this->router->viewRenderer->renderView($action));
+            return $this->router->response;
         }
         if (is_array($action) || $action === null)
         {
@@ -35,9 +35,10 @@ class RouterPathResolver
 
             if (isset($action) && !isset($action['closure']))
             {
-                $action['request'] = $request;
+                $action['request'] = $this->router->request;
                 $action['controller'] = $this->container->get($action['controller']);
-                $action['controller']->setRequest($request);
+                $action['controller']->setRequest($this->router->request);
+                $action['controller']->setResponse($this->router->response);
                 $action['controller']->setViewRenderer($viewRenderer);
                 $params = $this->getActionParameters($action['controller']::class, $action['action'], $action);
             }
@@ -49,7 +50,7 @@ class RouterPathResolver
             {
                 throw new PageNotFoundException("No route matched for '$path' with method '".strtoupper($method)."'");
                 $this->router->response->setResponseCode(404);
-                return;
+                return $this->router->response;
             }
         }
         return call_user_func($action['closure'] ?? [$action['controller'], $action['action']], ...$params);

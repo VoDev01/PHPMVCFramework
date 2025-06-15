@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Request;
+use App\Core\Response;
 use App\Models\Product;
 
 class ProductsController extends Controller
@@ -11,11 +12,12 @@ class ProductsController extends Controller
     public function __construct(private Product $product) 
     {
     }
-    public function index()
+    public function index(): Response
     {
         $products = $this->product->getAll();
         $total = $this->product->getTotal();
-        return $this->render("/products/index", ["products" => $products, "total" => $total]);
+        $this->response->setBody($this->render("/products/index", ["products" => $products, "total" => $total]));
+        return $this->response;
     }
     public function create()
     {

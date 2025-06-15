@@ -9,11 +9,18 @@ class Controller
 {
     protected Request $request;
 
+    protected Response $response;
+
     protected TemplateViewRendererInterface $viewRenderer;
 
     public function setRequest(Request $request)
     {
         $this->request = $request;
+    }
+
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
     }
 
     public function setViewRenderer(TemplateViewRendererInterface $viewRenderer)
@@ -28,8 +35,8 @@ class Controller
      * 
      * @return [type]
      */
-    public function render($view, array $params = [])
+    public function render($view, array $params = []): string
     {
-        echo $this->viewRenderer->renderView($view, $params);
+        return $this->viewRenderer->renderView($view, $params);
     }
 }
