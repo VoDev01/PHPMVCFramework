@@ -40,10 +40,11 @@ class MVCTemplateViewRenderer implements TemplateViewRendererInterface
 
         ob_start();
 
-        if (preg_match("/^.*<x-(?<layoutName>[^\s]+)>\X*(?=.*<\/x-.+>).*$/mu", $viewContent, $matches))
+        if (preg_match("/^.*<x-(?<layoutName>[^\s]+)>\X*?(?=.*<\/x-.+>).*$/mu", $viewContent, $matches))
         {
             $layoutContent = $this->renderLayout($matches["layoutName"]);
-            $layoutContent = $this->replaceSlot($layoutContent, $viewContent);
+            $layoutContent = $this->replaceSlots($layoutContent, $viewContent);
+            $viewContent = $this->replaceOneLineLayouts($viewContent);
             eval("?>" . preg_replace("/{{\s*content\s*}}/", $viewContent, $layoutContent));
             return ob_get_clean();
         }
@@ -56,15 +57,29 @@ class MVCTemplateViewRenderer implements TemplateViewRendererInterface
         }
     }
 
-    private function replaceSlot(string $layout, string $slot)
+    private function replaceSlots(string $layout, string $slot): string
     {
         preg_match_all("/^.*<x-slot name=\"(?<slotName>.+?)\">(?<slotContent>\X+?)<\/x-slot>$/mu", $slot, $matches, PREG_SET_ORDER);
         $newLayout = "";
-        foreach($matches as $match)
+        foreach ($matches as $match)
         {
-            $newLayout = preg_replace("/{{\s*".$match["slotName"]."\s*}}/", "<{$match["slotName"]}>{$match["slotContent"]}</{$match["slotName"]}>", $layout);
+            $newLayout = preg_replace("/{{\s*" . $match["slotName"] . "\s*}}/", "<{$match["slotName"]}>{$match["slotContent"]}</{$match["slotName"]}>", $layout);
         }
         return $newLayout;
+    }
+
+    public function replaceOneLineLayouts(string $code): string
+    {
+        $result = $code;
+        preg_match_all("/<x-(?<layoutName>.+?)\s*\/>/mu", $code, $matches, PREG_SET_ORDER);
+        if (isset($matches))
+        {
+            foreach ($matches as $match)
+            {
+               $result = preg_replace("/<x-" . $match["layoutName"] . "\s*\/>/mu", $this->renderLayout($match["layoutName"]), $code);
+            }
+        }
+        return $result;
     }
 
     private function replaceVariables(string $code): string
