@@ -52,4 +52,12 @@ class ProductsController extends Controller
         $this->product->delete($request->id);
         return $this->redirect("/products/index");
     }
+    public function responseCodeExample(): Response
+    {
+        $this->response->setResponseCode(451);
+
+        $this->response->setBody("Unavailable for legal reasons");
+
+        return $this->response;
+    }
 }

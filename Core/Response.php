@@ -11,6 +11,13 @@ class Response
 
     private array $headers = [];
 
+    private int $statusCode = 0;
+
+    public function setStatusCode(int $code)
+    {
+        $this->statusCode = $code;
+    }
+
     public function redirect(string $url)
     {
         header("Location: $url");
@@ -33,7 +40,12 @@ class Response
 
     public function send()
     {
-        foreach($this->headers as $header)
+        if ($this->statusCode)
+        {
+            http_response_code($this->statusCode);
+        }
+        
+        foreach ($this->headers as $header)
         {
             header($header);
         }
