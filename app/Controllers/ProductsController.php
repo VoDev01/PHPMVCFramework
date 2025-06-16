@@ -25,8 +25,7 @@ class ProductsController extends Controller
     public function createPost(Request $request)
     {
         $this->product->insert($request->body());
-        header("Location: /products/{$this->product->getInsertId()}/show");
-        exit;
+        return $this->redirect("/products/{$this->product->getInsertId()}/show");
     }
     public function edit(int $id): Response
     {
@@ -36,8 +35,7 @@ class ProductsController extends Controller
     public function editPost(Request $request)
     {
         $this->product->update($request->body(), $request->id);
-        header("Location: /products/$request->id/show");
-        exit;
+        return $this->redirect("/products/$request->id/show");
     }
     public function show(int $id): Response
     {
@@ -52,7 +50,6 @@ class ProductsController extends Controller
     public function deletePost(Request $request)
     {
         $this->product->delete($request->id);
-        header("Location: /products/index");
-        exit;
+        return $this->redirect("/products/index");
     }
 }

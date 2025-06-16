@@ -35,9 +35,16 @@ class Controller
      * 
      * @return [type]
      */
-    public function render($view, array $params = []): Response
+    protected function render($view, array $params = []): Response
     {
         $this->response->setBody($this->viewRenderer->renderView($view, $params));
+        return $this->response;
+    }
+
+    protected function redirect(string $url): Response
+    {
+        $this->response->redirect($url);
+
         return $this->response;
     }
 }

@@ -1,3 +1,4 @@
+<x-slot name="title">Create</x-slot>
 <x-main>
     <h1>Create product</h1>
     <form action="/products/createPost" method="post">

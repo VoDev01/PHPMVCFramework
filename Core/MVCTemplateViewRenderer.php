@@ -40,11 +40,12 @@ class MVCTemplateViewRenderer implements TemplateViewRendererInterface
 
         ob_start();
 
-        if (preg_match("/^.*<x-(?<layoutName>[^\s]+)>\X*?(?=.*<\/x-.+>).*$/mu", $viewContent, $matches))
+        if (preg_match("/<x-(?<layoutName>[^\s]+)>\X*(?=<\/x-.+>).*/mu", $viewContent, $matches))
         {
             $layoutContent = $this->renderLayout($matches["layoutName"]);
-            $layoutContent = $this->replaceSlots($layoutContent, $viewContent);
+            $layoutContent = $this->replaceSlots($layoutContent, $viewContent) ?? $layoutContent;
             $viewContent = $this->replaceOneLineLayouts($viewContent);
+            $viewContent = preg_replace("/<x-slot name=\".+?\">\X+<\/x-slot>/mu", "", $viewContent);
             eval("?>" . preg_replace("/{{\s*content\s*}}/", $viewContent, $layoutContent));
             return ob_get_clean();
         }
@@ -59,8 +60,8 @@ class MVCTemplateViewRenderer implements TemplateViewRendererInterface
 
     private function replaceSlots(string $layout, string $slot): string
     {
-        preg_match_all("/^.*<x-slot name=\"(?<slotName>.+?)\">(?<slotContent>\X+?)<\/x-slot>$/mu", $slot, $matches, PREG_SET_ORDER);
-        $newLayout = "";
+        preg_match_all("/<x-slot name=\"(?<slotName>.+?)\">(?<slotContent>\X+?)<\/x-slot>/mu", $slot, $matches, PREG_SET_ORDER);
+        $newLayout = $layout;
         foreach ($matches as $match)
         {
             $newLayout = preg_replace("/{{\s*" . $match["slotName"] . "\s*}}/", "<{$match["slotName"]}>{$match["slotContent"]}</{$match["slotName"]}>", $layout);
@@ -76,7 +77,8 @@ class MVCTemplateViewRenderer implements TemplateViewRendererInterface
         {
             foreach ($matches as $match)
             {
-               $result = preg_replace("/<x-" . $match["layoutName"] . "\s*\/>/mu", $this->renderLayout($match["layoutName"]), $code);
+                preg_replace("<x-.+?\s*\/>/mu", "", $code);
+                $result = preg_replace("/<x-" . $match["layoutName"] . "\s*\/>/mu", $this->renderLayout($match["layoutName"]), $code);
             }
         }
         return $result;

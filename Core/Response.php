@@ -7,8 +7,19 @@ namespace App\Core;
  */
 class Response
 {
-
     private string $body = "";
+
+    private array $headers = [];
+
+    public function redirect(string $url)
+    {
+        header("Location: $url");
+    }
+
+    public function addHeader(string $header)
+    {
+        $this->headers[] = $header;
+    }
 
     public function setBody(string $body)
     {
@@ -22,6 +33,11 @@ class Response
 
     public function send()
     {
+        foreach($this->headers as $header)
+        {
+            header($header);
+        }
+
         echo $this->body;
     }
 
