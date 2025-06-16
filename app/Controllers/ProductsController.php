@@ -16,10 +16,9 @@ class ProductsController extends Controller
     {
         $products = $this->product->getAll();
         $total = $this->product->getTotal();
-        $this->response->setBody($this->render("/products/index", ["products" => $products, "total" => $total]));
-        return $this->response;
+        return $this->render("/products/index", ["products" => $products, "total" => $total]);
     }
-    public function create()
+    public function create(): Response
     {
         return $this->render("/products/create");
     }
@@ -29,7 +28,7 @@ class ProductsController extends Controller
         header("Location: /products/{$this->product->getInsertId()}/show");
         exit;
     }
-    public function edit(int $id)
+    public function edit(int $id): Response
     {
         $product = $this->product->find($id);
         return $this->render("/products/edit", ['product' => $product]);
@@ -40,12 +39,12 @@ class ProductsController extends Controller
         header("Location: /products/$request->id/show");
         exit;
     }
-    public function show(int $id)
+    public function show(int $id): Response
     {
         $product = $this->product->find($id);
         return $this->render("/products/show", ['product' => $product]);
     }
-    public function delete(int $id)
+    public function delete(int $id): Response
     {
         $product = $this->product->find($id);
         return $this->render("/products/delete", ['product' => $product]);

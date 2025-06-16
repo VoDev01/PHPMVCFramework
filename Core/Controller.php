@@ -35,8 +35,9 @@ class Controller
      * 
      * @return [type]
      */
-    public function render($view, array $params = []): string
+    public function render($view, array $params = []): Response
     {
-        return $this->viewRenderer->renderView($view, $params);
+        $this->response->setBody($this->viewRenderer->renderView($view, $params));
+        return $this->response;
     }
 }
