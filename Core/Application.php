@@ -34,10 +34,12 @@ class Application
 
     protected ServiceContainer $container;
 
+    protected array $middleware;
+
     /**
      * @param string $ROOT_DIR
      */
-    public function __construct(string $ROOT_DIR, ServiceContainer $container)
+    public function __construct(string $ROOT_DIR, ServiceContainer $container, array $middleware)
     {
         self::$ROOT_DIR = $ROOT_DIR;
         $this->request = Request::createFromGlobals();
@@ -46,7 +48,8 @@ class Application
         $this->routeMapper = new RouteMapper($this);
         $this->database = $container->get(Database::class);
         $this->container = $container;
-        $this->routerPathResolver = new RouterPathResolver($this->router, $this->container);
+        $this->middleware = $middleware;
+        $this->routerPathResolver = new RouterPathResolver($this->router, $this->container, $this->middleware);
     }
 
     /**

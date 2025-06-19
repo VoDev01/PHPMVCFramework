@@ -55,9 +55,14 @@ class Router
     public function pattern(string $pattern, callable|array $action = null)
     {
         if (is_array($action))
-            $this->routes['patterns'][$pattern] = ["controller" => $action[0], "action" => $action[1], "method" => $action[2] ?? null];
+            $this->routes['patterns'][$pattern] = [
+                "controller" => $action[0] ?? null,
+                "action" => $action[1] ?? null,
+                "method" => $action[2] ?? null,
+                "middleware" => $action["middleware"] ?? null
+            ];
         else if (is_callable($action))
-            $this->routes['patterns'][$pattern] = ["closure" => $action];
+            $this->routes['patterns'][$pattern] = ["closure" => $action, "middleware" => $action["middleware"] ?? null];
         else
             array_push($this->routes['patterns'], $pattern);
     }
@@ -150,14 +155,17 @@ class Router
             {
                 $matches = array_filter($matches, "is_string", ARRAY_FILTER_USE_KEY);
 
-                $bind = array_merge($matches, $this->routes[$method], is_array($patternAction) ? $patternAction : []);
+                $bind = array_merge($matches, $this->routes[$method], is_array($patternAction) ? array_filter($patternAction) : []);
 
                 if (array_key_exists($method, $this->routes))
                 {
                     if (is_array($patternAction))
                     {
-                        if ($method !== $patternAction["method"] )
-                            continue;
+                        if(isset($patternAction["method"]))
+                        {
+                            if ($method !== $patternAction["method"])
+                                continue;
+                        }
                     }
                     if (array_key_exists($path, $this->routes[$method]))
                     {

@@ -7,10 +7,11 @@ namespace App\Core;
 use App\Core\Exceptions\PageNotFoundException;
 use ReflectionFunction;
 use ReflectionMethod;
+use UnexpectedValueException;
 
 class RouterPathResolver
 {
-    public function __construct(private Router $router, private ServiceContainer $container)
+    public function __construct(private Router $router, private ServiceContainer $container, private array $middlewares)
     {
     }
 
@@ -59,13 +60,32 @@ class RouterPathResolver
         {
             $controllerHandler = new ControllerRequestHandler($action['controller'], $action['action'], $params);
 
-            $middleware = $this->container->get(\App\Middleware\ChangeResponseExample::class);
-            $middlewareTrim = $this->container->get(\App\Middleware\ChangeRequestExample::class);
+            $middleware = $this->getMiddleware($action);
 
-            $middlewareHandler = new MiddlewareRequestHandler([$middleware, $middlewareTrim, clone $middleware, clone $middleware], $controllerHandler);
+            $middlewareHandler = new MiddlewareRequestHandler($middleware, $controllerHandler);
 
             return $middlewareHandler->handle($this->router->request);
         }
+    }
+
+    private function getMiddleware(array $params): array
+    {
+        if(!array_key_exists("middleware", $params))
+        {
+            return [];
+        }
+
+        $middleware = explode(", ", $params["middleware"]);
+
+        array_walk($middleware, function(&$value) {
+            if(!array_key_exists($value, $this->middlewares))
+            {
+                throw new UnexpectedValueException("Middleware '$value' not found in config settings");
+            }
+            $value = $this->container->get($this->middlewares[$value]);
+        });
+
+        return $middleware;
     }
 
     private function getActionParameters(string|null $controller, string|callable $action, array $values)

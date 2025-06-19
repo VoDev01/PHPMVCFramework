@@ -15,6 +15,8 @@ set_exception_handler("App\Core\ErrorHandler::handleException");
 
 $container = require_once __DIR__ . '/../config/services.php';
 
-$app = new \App\Core\Application(dirname(__DIR__), $container);
+$middleware = require_once __DIR__ . '/../config/middleware.php';
+
+$app = new \App\Core\Application(dirname(__DIR__), $container, $middleware);
 
 $app->run();

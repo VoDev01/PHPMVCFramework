@@ -24,7 +24,7 @@ class ProductsController extends Controller
     }
     public function createPost(Request $request)
     {
-        $this->product->insert($request->body());
+        $this->product->insert($request->body);
         return $this->redirect("/products/{$this->product->getInsertId()}/show");
     }
     public function edit(int $id): Response
@@ -34,7 +34,7 @@ class ProductsController extends Controller
     }
     public function editPost(Request $request)
     {
-        $this->product->update($request->body(), $request->id);
+        $this->product->update($request->rawBody(), $request->id);
         return $this->redirect("/products/$request->id/show");
     }
     public function show(int $id): Response

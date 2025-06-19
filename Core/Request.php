@@ -94,7 +94,7 @@ class Request
         return $this->isMethod('delete');
     }
 
-    public function body(): array
+    public function rawBody(): array
     {
         $body = [];
         if($this->isGet())

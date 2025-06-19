@@ -10,5 +10,5 @@ $this->app->router->get('/register', [HomeController::class, 'register']);
 $this->app->router->post('/register', [HomeController::class, 'registerPost']);
 $this->app->router->pattern('/products/{id:\d+}/delete', [ProductsController::class, 'delete', 'delete']);
 $this->app->router->pattern("/home/catalog/{name:\w+}",[HomeController::class, 'catalog']);
-$this->app->router->pattern("/{controller}/{id:\d+}/{action}");
+$this->app->router->pattern("/{controller}/{id:\d+}/{action}", ["middleware" => "message, message, deny"]);
 $this->app->router->pattern('/{controller}/{action}');

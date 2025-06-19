@@ -20,7 +20,7 @@ abstract class Validator
         $this->errors = [];
         foreach ($this->rules() as $field => $rules)
         {
-            $value = $request->body()[$field];
+            $value = $request->rawBody()[$field];
             $rules = array_reverse($rules);
             foreach ($rules as $rule)
             {
@@ -46,7 +46,7 @@ abstract class Validator
             }
             return $this;
         }
-        return $request->body();
+        return $request->rawBody();
     }
 
     protected abstract function rules(): array;
