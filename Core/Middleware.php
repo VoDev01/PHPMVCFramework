@@ -2,9 +2,9 @@
 
 namespace App\Core;
 
-use Closure;
+use App\Core\RequestHandlerInterface;
 
 abstract class Middleware
 {
-    public abstract function handle(Request $request, Closure $next): Response;
+    public abstract function handle(Request $request, RequestHandlerInterface $next): Response;
 }

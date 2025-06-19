@@ -10,8 +10,8 @@ use UnexpectedValueException;
 #[\AllowDynamicProperties]
 class Request 
 {
-    public array $query;
-    public array $body;
+    public array $query = [];
+    public array $body = [];
 
     public function __construct(public array $files, public array $cookie, public array $server)
     {

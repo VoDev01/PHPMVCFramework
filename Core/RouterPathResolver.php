@@ -37,7 +37,6 @@ class RouterPathResolver
             {
                 $action['request'] = $this->router->request;
                 $action['controller'] = $this->container->get($action['controller']);
-                $action['controller']->setRequest($this->router->request);
                 $action['controller']->setResponse($this->router->response);
                 $action['controller']->setViewRenderer($viewRenderer);
                 $params = $this->getActionParameters($action['controller']::class, $action['action'], $action);
@@ -48,12 +47,25 @@ class RouterPathResolver
             }
             else
             {
-                throw new PageNotFoundException("No route matched for '$path' with method '".strtoupper($method)."'");
+                throw new PageNotFoundException("No route matched for '$path' with method '" . strtoupper($method) . "'");
                 $this->router->response->setResponseCode(404);
                 return $this->router->response;
             }
         }
-        return call_user_func($action['closure'] ?? [$action['controller'], $action['action']], ...$params);
+
+        if (isset($action['closure']))
+            return call_user_func($action['closure'], ...$params);
+        else
+        {
+            $controllerHandler = new ControllerRequestHandler($action['controller'], $action['action'], $params);
+
+            $middleware = $this->container->get(\App\Middleware\ChangeResponseExample::class);
+            $middlewareTrim = $this->container->get(\App\Middleware\ChangeRequestExample::class);
+
+            $middlewareHandler = new MiddlewareRequestHandler([$middleware, $middlewareTrim, clone $middleware, clone $middleware], $controllerHandler);
+
+            return $middlewareHandler->handle($this->router->request);
+        }
     }
 
     private function getActionParameters(string|null $controller, string|callable $action, array $values)
